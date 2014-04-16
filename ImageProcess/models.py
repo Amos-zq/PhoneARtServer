@@ -3,6 +3,7 @@ from django.db import models
 from os.path import join
 from PhoneARtDemo.settings import MEDIA_ROOT
 from time import gmtime, strftime
+from PatternRecognition.Classifier import * #import PatternRecognition package
 
 
 # name the uploaded image with current time
@@ -44,7 +45,12 @@ class Image(models.Model):
         '''save image'''
         super(Image, self).save(*args, **kwargs)
         
-        #todo: should we generate the descriptors?
+    def match(self):
+        '''match the image against the database and return the matched class index'''
+        img_dir = os.path.join(MEDIA_ROOT, self.image_path.name)
+        idx, class_folder = Classifier(img_dir, 1)
+        
+        return idx, class_folder
         
     def __unicode__(self):
         return self.image_path.name

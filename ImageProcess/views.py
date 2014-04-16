@@ -32,7 +32,13 @@ def upload_file(request):
             #Image
             image = Image(object_of_interest = obj, image_path = request.FILES['file'])
             image.save()
-            return success()
+            
+            '''match the image against the database'''
+            idx, class_name = image.match()
+            
+            #wrap idx and class_name as json and return
+            return responseJson({'class_name':class_name})
+            
         else:
             return fail()
     else:
