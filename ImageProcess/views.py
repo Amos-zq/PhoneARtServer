@@ -17,11 +17,12 @@ def upload_file(request):
     if request.method == 'POST':
         form = UploadFileForm(request.POST, request.FILES)
         if form.is_valid():
+
             #POI
             lon = request.REQUEST.get('longitude', 0.0)
             lat = request.REQUEST.get('latitude', 0.0)
             loc_name = request.REQUEST.get('location_name', 'default')
-            poi = POI(longitude=lon, latitude=lat, location_name=loc_name)
+            poi = POI(longtitude=lon, latitude=lat, location_name=loc_name)
             poi.save()
             
             #Object

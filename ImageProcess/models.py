@@ -1,9 +1,11 @@
-import os
+import os.path
 from django.db import models
-from os.path import join
 from PhoneARtDemo.settings import MEDIA_ROOT
 from time import gmtime, strftime
-from PatternRecognition.Classifier import * #import PatternRecognition package
+
+import sys
+sys.path.append(os.path.abspath('../PatternRecognition'))
+from MainSource.Classifier import Classifier #import PatternRecognition package
 
 
 # name the uploaded image with current time
