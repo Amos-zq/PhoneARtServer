@@ -22,3 +22,25 @@ def fail():
 
 def success():
     return responseJson({'status':'success'})
+
+class AlreadyExistException(Exception):
+    def __init__(self):
+        pass 
+    
+    def __str__(self):
+        return repr("Already Exist Exception")
+    
+class IncompleteParamException(Exception):
+    def __init__(self):
+        pass 
+    
+    def __str__(self):
+        return repr("The parameter is incomplete")
+
+
+class ParseException(Exception):
+    def __init__(self):
+        pass 
+    
+    def __str__(self):
+        return repr("receipt parsing error")

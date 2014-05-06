@@ -5,42 +5,68 @@ from django.http import Http404
 from forms import UploadFileForm
 from PhoneARtDemo.utils import *
 from django.views.decorators.csrf import csrf_exempt
+import os.path
+from PhoneARtDemo.settings import MEDIA_ROOT
 
 """
-api function: upload information from client to server
-    -POI
-    -Obj-of-Int
-    -Image file (triger background PR automatically after successful upload)
+upload_image_for_match: upload information from client to server
+    -title
+    -longitude, latitude, azimuth, pitch, roll
+    -image
 """
 @csrf_exempt
-def upload_file(request):
+def upload_image_for_match(request):
     if request.method == 'POST':
         form = UploadFileForm(request.POST, request.FILES)
         if form.is_valid():
-
-            #POI
-            lon = request.REQUEST.get('longitude', 0.0)
-            lat = request.REQUEST.get('latitude', 0.0)
-            loc_name = request.REQUEST.get('location_name', 'default')
-            poi = POI(longtitude=lon, latitude=lat, location_name=loc_name)
-            poi.save()
+            #title
+            tit = request.REQUEST.get("title", None)
             
-            #Object
-            obj_name = request.REQUEST.get('object_name', 'default')
-            obj = Object(poi = poi, object_name = obj_name)
-            obj.save()
+            #Sensor
+            lon = request.REQUEST.get('longitude', None)
+            lat = request.REQUEST.get('latitude', None)
+            azi = request.REQUEST.get("azimuth", None)
+            pit = request.REQUEST.get("pitch", None)
+            rol = request.REQUEST.get("roll", None)
             
             #Image
-            image = Image(object_of_interest = obj, image_path = request.FILES['file'])
+            image = Image(image_path = request.FILES['file'],
+                          azimuth = azi,
+                          pitch = pit,
+                          roll = rol,
+                          longitude = lon,
+                          latitude = lat,
+                          title = tit)
             image.save()
             
             '''match the image against the database'''
-            idx, class_name = image.match()
+            object_name = image.match()
             
             #wrap idx and class_name as json and return
-            return responseJson({'class_name':class_name})
+            return responseJson({'object_name':object_name})
             
         else:
             return fail()
     else:
         return fail()
+
+"""
+request_image_url: request the static url of the reference image
+    - object_name
+"""
+@csrf_exempt
+def request_image_url(request):
+    name = request.REQUEST.get('object_name', None)
+    if name is None:
+        raise IncompleteParamException()
+    # if object name is not None
+    obj = Object.objects.get(object_name = name)
+    if object is None:
+        return Http404
+    
+    # return the image path
+    url = obj.img_path.name
+    return responseJson({'url:':url})
+    
+     
+    
