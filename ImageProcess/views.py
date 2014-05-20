@@ -5,8 +5,6 @@ from django.http import Http404
 from forms import UploadFileForm
 from PhoneARtDemo.utils import *
 from django.views.decorators.csrf import csrf_exempt
-import os.path
-from PhoneARtDemo.settings import MEDIA_ROOT
 
 """
 upload_image_for_match: upload information from client to server
@@ -40,10 +38,11 @@ def upload_image_for_match(request):
             image.save()
             
             '''match the image against the database'''
-            object_name = image.match()
+            name = image.match()
+            obj = Object.objects.get(object_name = name)
             
-            #wrap idx and class_name as json and return
-            return responseJson({'object_name':object_name})
+            #wrap object_url and object_name as json and return
+            return responseJson({'object_url':obj.img_path.name, 'object':obj.object_name})
             
         else:
             return fail()
@@ -66,7 +65,7 @@ def request_image_url(request):
     
     # return the image path
     url = obj.img_path.name
-    return responseJson({'url:':url})
+    return responseJson({'object_url:':url})
     
      
     
