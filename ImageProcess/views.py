@@ -5,6 +5,7 @@ from django.http import Http404
 from forms import UploadFileForm
 from PhoneARtDemo.utils import *
 from django.views.decorators.csrf import csrf_exempt
+import timeit
 
 """
 upload_image_for_match: upload information from client to server
@@ -59,7 +60,14 @@ def request_image_url(request):
     if name is None:
         raise IncompleteParamException()
     # if object name is not None
-    obj = Object.objects.get(object_name = name)
+    obj = None
+    
+    t = Timer(obj = Object.objects.get(object_name = name)).timeit(1000)     # outside the try/except
+
+    #t.print_exc()
+    print t
+    
+    
     if object is None:
         return Http404
     
